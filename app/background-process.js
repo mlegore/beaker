@@ -29,6 +29,8 @@ import * as datProtocol from './background-process/protocols/dat'
 
 import * as openURL from './background-process/open-url'
 
+import frameworks from './frameworks/index.js'
+
 // read config from env vars
 setupDebugLogger()
 if (process.env.beaker_user_data_path) {
@@ -74,7 +76,8 @@ app.on('ready', function () {
   webAPIs.setup()
 
   // listen OSX open-url event
-  openURL.setup()
+  openURL.setup(),
+  frameworks.setup()
 })
 
 app.on('activate', () => windows.ensureOneWindowExists())

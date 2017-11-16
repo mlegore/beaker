@@ -1,6 +1,8 @@
 /* globals beaker */
 
 import prettyHash from 'pretty-hash'
+import frameworks from '../frameworks/index.js'
+import { getFrameworkPerm } from './strings'
 
 // front-end only:
 var yo
@@ -29,7 +31,7 @@ function lazyDatTitleElement (archiveKey, title) {
   return el
 }
 
-export default {
+var staticPerms = {
   js: {
     desc: 'Run Javascript',
     icon: 'code',
@@ -131,3 +133,30 @@ export default {
     requiresRefresh: false
   }
 }
+
+function getRootFrameworkPermission (frameworkName) {
+  return {
+    desc: 'URL requests framework access to ' + frameworkName,
+    icon: '',
+    persist: true,
+    alwaysDisallow: false,
+    requiresRefresh: false
+  }
+}
+
+
+var frameworkPerms = {}
+for (var frameworkName in frameworks.frameworks) {
+  if (!frameworks.frameworks.hasOwnProperty(frameworkName)) continue;
+  var frameworkPermissions = frameworks.frameworks[frameworkName].permissions
+  frameworkPerms[getFrameworkPerm(frameworkName)] = getRootFrameworkPermission(frameworkName)
+
+  if(frameworkPermissions) {
+    for(var permissionKey in frameworkPermissions) {
+      if (!frameworkPermissions.hasOwnProperty(permissionKey)) continue;
+      frameworkPerms[getFrameworkPerm(frameworkName, permissionKey)] = frameworkPermissions[permissionKey]
+    }
+  }
+}
+
+export default Object.assign(staticPerms, frameworkPerms)

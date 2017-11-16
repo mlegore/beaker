@@ -11,6 +11,7 @@ import archivesManifest from '../lib/api-manifests/internal/archives'
 import bookmarksManifest from '../lib/api-manifests/internal/bookmarks'
 import historyManifest from '../lib/api-manifests/internal/history'
 
+
 // internal apis
 import profilesAPI from './web-apis/profiles'
 import archivesAPI from './web-apis/archives'
@@ -19,9 +20,11 @@ import historyAPI from './web-apis/history'
 
 // external manifests
 import datArchiveManifest from '../lib/api-manifests/external/dat-archive'
+import frameworkManifest from '../lib/api-manifests/external/framework'
 
 // external apis
 import datArchiveAPI from './web-apis/dat-archive'
+import frameworkAPI from './web-apis/framework'
 
 // exported api
 // =
@@ -35,6 +38,7 @@ export function setup () {
 
   // external apis
   rpc.exportAPI('dat-archive', datArchiveManifest, datArchiveAPI, secureOnly)
+  rpc.exportAPI('framework', frameworkManifest, frameworkAPI)
 
   // register a message-handler for setting up the client
   // - see lib/fg/import-web-apis.js

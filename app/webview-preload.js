@@ -2,6 +2,7 @@ import { webFrame } from 'electron'
 import importWebAPIs from './lib/fg/import-web-apis' // TODO remove
 import DatArchive from './lib/web-apis/dat-archive'
 import beaker from './lib/web-apis/beaker'
+import frameworkLoader from './lib/web-apis/framework-loader'
 import { setup as setupLocationbar } from './webview-preload/locationbar'
 import { setup as setupPrompt } from './webview-preload/prompt'
 import setupRedirectHackfix from './webview-preload/redirect-hackfix'
@@ -27,5 +28,7 @@ if (['beaker:', 'dat:', 'https:'].includes(window.location.protocol) ||
 if (window.location.protocol === 'beaker:') {
   window.beaker = beaker
 }
+
+window.frameworkLoader = frameworkLoader
 setupLocationbar()
 setupPrompt()

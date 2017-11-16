@@ -6,6 +6,12 @@ export function getPermParam (permissionToken) {
   return permissionToken.split(':').slice(1).join(':')
 }
 
+export function getFrameworkPerm (frameworkName, permissionToken) {
+  if(permissionToken)
+    return 'framework/' + frameworkName + '/' + permissionToken
+  return 'framework/' + frameworkName
+}
+
 export function ucfirst (str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
