@@ -1,5 +1,3 @@
-import { Readable, Writable } from 'stream';
-import emitStream from 'emit-stream'
 import EventEmitter from 'events'
 import permissions from './permissions'
 import manifest from './manifest'
@@ -11,11 +9,6 @@ export default function (framework) {
         resolve('Hello ' + message)
       }, 1000);
     })
-  }
-
-  var readable = new Readable({ objectMode: true, read() {} })
-  readable.close = () => {
-    readable.push(null)
   }
 
   var helloEvents = new EventEmitter()
