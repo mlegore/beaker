@@ -3,22 +3,18 @@ import { EventTarget, bindEventStream, fromEventStream } from './event-target'
 import errors from 'beaker-error-constants'
 import frameworkManifest from '../api-manifests/external/framework'
 import hello from '../../frameworks/hello/webview-preload'
+import ssb from '../../frameworks/ssb/webview-preload'
 import { path } from 'path'
 
 var frameworks = {
-  hello
+  hello,
+  ssb
 }
 
 var frameworkLoader = {}
 
 var frameworkRpc = rpc.importAPI('framework', frameworkManifest, { timeout: false, errors })
 var readableToEventTarget = function (method) { return function (...args) { return fromEventStream(method.apply(this, args)) }}
-var writableToEventStream = function (method) {
-  return function (...args) {
-    var writable = method.apply(this, args)
-    writable.write()
-  }
-}
 
 function FrameworkHelper (frameworkName, permission) {
   return {

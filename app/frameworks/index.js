@@ -3,6 +3,7 @@ import { toStream } from 'emit-stream'
 import through from 'through'
 import { path, join } from 'path'
 import hello from './hello/index.js'
+import ssb from './ssb/index.js'
 import { Writable } from 'stream';
 import rpc from 'pauls-electron-rpc'
 
@@ -48,7 +49,7 @@ function framework (frameworkName) {
   }
 }
 
-var frameworks = { hello: hello(framework('hello')) }
+var frameworks = { hello: hello(framework('hello')), ssb: ssb(framework('ssb')) }
 
 export default {
   frameworks,
