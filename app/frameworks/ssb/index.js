@@ -1,17 +1,14 @@
-import EventEmitter from 'events'
-// import permissions from './permissions'
 import manifest from './manifest'
 import party from 'ssb-party'
 import {cbPromise} from '../../lib/functions'
 import toStream from 'pull-stream-to-stream'
 import pull from 'pull-stream'
-import url from 'url'
 import {protocol} from 'electron'
+import protocolHandler from './protocol'
 
 export default function (framework) {
   var party = require('ssb-party')
   var partyReady = cbPromise(cb => party(cb))
-
 
   var unbox = function (ssb, message, cb) {
     if (message && message.value && message.value.content && typeof message.value.content === 'string') {
@@ -53,8 +50,12 @@ export default function (framework) {
     }
   }
 
-  var setup = function () {
+  var setup = async function () {
     framework.exportAPI(manifest, api)
+    var sbot = await partyReady
+    protocol.registerBufferProtocol('ssb-blob', protocolHandler(sbot), (error) => {
+      if (error) console.error('Failed to register protocol')
+    })
   }
 
   return {

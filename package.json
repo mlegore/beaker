@@ -108,6 +108,8 @@
     "logo": "https://opencollective.com/opencollective/logo.txt"
   },
   "dependencies": {
+    "pull-concat": "^1.1.1",
+    "pull-identify-filetype": "^1.1.0",
     "ssb-party": "^0.5.1"
   }
 }
