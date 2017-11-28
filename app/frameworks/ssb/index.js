@@ -9,8 +9,13 @@ import protocolHandler from './protocol'
 export default function (framework) {
   var party = require('ssb-party')
   var partyReady = cbPromise(cb => party(cb))
+  var sbot = null
 
-  var unbox = function (ssb, message, cb) {
+  partyReady.then(function (ssb) {
+    sbot = ssb
+  })
+
+  var unboxMessage = function (ssb, message, cb) {
     if (message && message.value && message.value.content && typeof message.value.content === 'string') {
       ssb.private.unbox(message.value.content, (err, value) => {
         if (err) {
@@ -26,23 +31,45 @@ export default function (framework) {
     }
   }
 
+  var unbox = function (stream, decrypt) {
+    if(decrypt) {
+      return pull(
+        stream,
+        pull.asyncMap((message, cb) => unboxMessage(sbot, message, cb)))
+    }
+
+    return stream
+  }
+
   var api = {
-    async createFeedStream () {
-      var ssbClient = await partyReady
-      return toStream.source(ssbClient.createFeedStream({ live: true }))
+    async ready () {
+      sbot = await partyReady
+      return true
     },
-    async whoami(cb) {
-      var ssbClient = await partyReady
-      return await cbPromise(cb => ssbClient.whoami(cb))
+    get (msgId, cb) {
+      return sbot.get(msgId, cb)
     },
-    async createUserStream(id) {
-      var ssbClient = await partyReady
+    createFeedStream (opts = {}) {
+      return toStream.source(sbot.createFeedStream(opts))
+    },
+    createLogStream (opts = {}) {
+      return toStream.source(sbot.createLogStream(opts))
+    },
+    messagesByType (opts = {}) {
+      return toStream.source(sbot.messagesByType(opts))
+    },
+    createHistoryStream (opts = {}) {
+      return toStream.source(sbot.messagesByType(opts))
+    },
+    createUserStream (opts = {}, decrypt = true) {
+      if (!opts.id) {
+        throw 'Must specify id'
+      }
 
-      var stream = pull(
-        ssbClient.createUserStream({ id: id, live: true }),
-        pull.asyncMap((message, cb) => unbox(ssbClient, message, cb)))
-
-      return toStream.source(stream)
+      return toStream.source(unbox(sbot.createUserStream(opts), decrypt))
+    },
+    whoami (cb) {
+      sbot.whoami(cb)
     },
     async publish (message) {
       var ssbClient = await partyReady

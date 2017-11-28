@@ -1,6 +1,9 @@
 export default {
-  publish: 'promise',
-  whoami: 'promise',
+  ready: 'promise',
+  whoami: 'async',
   createFeedStream: 'readable',
-  createUserStream: 'readable'
+  createLogStream: 'readable',
+  messagesByType: 'readable',
+  createUserStream: 'readable',
+  // publish: 'promise'
 }
