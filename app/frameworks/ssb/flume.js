@@ -94,7 +94,7 @@ export default function (api, overwrite = false)  {
       pause.resume()
       setTimeout(function() {
         pause.pause()
-        setTimeout(unpause, 100)
+        setTimeout(unpause, 200)
       }, 100)
     }
 
