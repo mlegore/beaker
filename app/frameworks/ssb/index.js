@@ -74,6 +74,17 @@ export default function (framework) {
     async publish (message) {
       var ssbClient = await partyReady
       return await cbPromise(cb => ssbClient.publish(message, cb))
+    },
+    since (cb) {
+      var timer = function () {
+        sbot.status((err, status) => {
+          if(err)
+            throw err
+          cb('update', status.sync.since)
+          setTimeout(timer, 200)
+        })
+      }
+      timer()
     }
   }
 

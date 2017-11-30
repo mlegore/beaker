@@ -2,11 +2,17 @@ import errors from 'beaker-error-constants'
 import {cbPromise} from '../../lib/functions'
 import frameworkManifest from './manifest'
 import toPull from 'stream-to-pull-stream'
+import afterParty from './afterparty'
+import Observable from 'obv'
 
 export default function (frameworkLoader, options) {
   var ssbRpc = frameworkLoader.importAPI(frameworkManifest, { timeout: false, errors })
 
   var views = {}
+
+  var since = Observable()
+  var eventTarget = ssbRpc.since()
+  eventTarget.addEventListener('update', event => since.set(event.data))
 
   var ssb = {
     ready () {
@@ -41,8 +47,9 @@ export default function (frameworkLoader, options) {
         ssbRpc.whoami(cb)
       else
         return cbPromise(innerCb => ssbRpc.whoami(innerCb))
-    }
+    },
+    since
   }
 
-  return ssb
+  return afterParty(ssb)
 }
