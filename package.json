@@ -96,7 +96,7 @@
     "build": "gulp build",
     "burnthemall": "node ./tasks/burnthemall.js",
     "lint": "eslint --ignore-pattern 'color-thief.js' --ignore-pattern 'app/node_modules' --ignore-pattern '*.build.js' app",
-    "rebuild": "gulp rebuild",
+    "rebuild": "electron-rebuild && gulp rebuild",
     "release-mac": "build -m -p never",
     "release-win": "build -w -p never",
     "start": "gulp start",
