@@ -43,7 +43,10 @@ frameworkLoader.load = async function (frameworkName, options) {
   if (!perm)
     throw 'framework permission denied'
 
-  return frameworks[frameworkName](FrameworkHelper(frameworkName), options)
+  var framework = frameworks[frameworkName](FrameworkHelper(frameworkName), options)
+  if (framework && framework.then)
+    return await framework
+  return framework
 }
 
 export default frameworkLoader

@@ -5,6 +5,6 @@ export default {
   createLogStream: 'readable',
   messagesByType: 'readable',
   createUserStream: 'readable',
-  since: 'emitter'
-  // publish: 'promise'
+  since: 'emitter',
+  publish: 'async'
 }

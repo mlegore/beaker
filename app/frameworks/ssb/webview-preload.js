@@ -5,10 +5,13 @@ import toPull from 'stream-to-pull-stream'
 import afterParty from './afterparty'
 import Observable from 'obv'
 
-export default function (frameworkLoader, options) {
+export default async function (frameworkLoader, options) {
   var ssbRpc = frameworkLoader.importAPI(frameworkManifest, { timeout: false, errors })
 
   var views = {}
+
+  // Wait for ssb to be ready
+  await ssbRpc.ready()
 
   var since = Observable()
   var eventTarget = ssbRpc.since()
@@ -42,11 +45,17 @@ export default function (frameworkLoader, options) {
       var stream = ssbRpc.createUserStream({id: info.id, live: true})
       return raw ? stream : toPull.source(stream)
     },
+    publish (message, cb) {
+      ssbRpc.publish(message, cb)
+    },
     whoami (cb) {
       if (cb)
         ssbRpc.whoami(cb)
       else
         return cbPromise(innerCb => ssbRpc.whoami(innerCb))
+    },
+    requestPublishPermission (type) {
+      return frameworkLoader.requestFrameworkPermission('publish:' + type)
     },
     since
   }

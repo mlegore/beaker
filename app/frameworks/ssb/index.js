@@ -1,10 +1,11 @@
-import manifest from './manifest'
 import party from 'ssb-party'
-import {cbPromise} from '../../lib/functions'
 import toStream from 'pull-stream-to-stream'
 import pull from 'pull-stream'
 import {protocol} from 'electron'
+import {cbPromise} from '../../lib/functions'
 import protocolHandler from './protocol'
+import manifest from './manifest'
+import permissions from './permissions'
 
 export default function (framework) {
   var party = require('ssb-party')
@@ -59,7 +60,7 @@ export default function (framework) {
       return toStream.source(sbot.messagesByType(opts))
     },
     createHistoryStream (opts = {}) {
-      return toStream.source(sbot.messagesByType(opts))
+      return toStream.source(sbot.createHistoryStream(opts))
     },
     createUserStream (opts = {}, decrypt = true) {
       if (!opts.id) {
@@ -71,20 +72,28 @@ export default function (framework) {
     whoami (cb) {
       sbot.whoami(cb)
     },
-    async publish (message) {
-      var ssbClient = await partyReady
-      return await cbPromise(cb => ssbClient.publish(message, cb))
+    async publish (message, cb) {
+      if (!(message && message.type)) {
+        cb('message type required')
+      }
+
+      var permission = await framework.queryPermission('publish:' + message.type, this.sender)
+      if(!permission) {
+        throw 'cannot publish this message type'
+      }
+
+      sbot.publish(message, cb)
     },
     since (cb) {
-      var timer = function () {
+      var updateSince = function () {
         sbot.status((err, status) => {
           if(err)
             throw err
           cb('update', status.sync.since)
-          setTimeout(timer, 200)
+          setTimeout(updateSince, 200)
         })
       }
-      timer()
+      updateSince()
     }
   }
 
@@ -99,7 +108,7 @@ export default function (framework) {
   return {
     api,
     manifest,
-    permissions: {},
+    permissions,
     setup
   }
 }

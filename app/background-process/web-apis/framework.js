@@ -12,7 +12,7 @@ export default {
     var allowed = await queryPermission(perm, this.sender)
     if(allowed) return true
 
-    allowed = await requestPermission(perm, this.sender, { title: 'Requesting permission to framework ' + frameworkName })
+    allowed = await requestPermission(perm, this.sender, { title: 'requesting permission to framework ' + frameworkName })
     if (!allowed) throw new UserDeniedError()
 
     return true

@@ -1,7 +1,7 @@
 /* globals beaker */
 
 import prettyHash from 'pretty-hash'
-import frameworks from '../frameworks/index.js'
+import frameworkPermissions from '../frameworks/perms.js'
 import { getFrameworkPerm } from './strings'
 
 // front-end only:
@@ -144,17 +144,14 @@ function getRootFrameworkPermission (frameworkName) {
   }
 }
 
-
 var frameworkPerms = {}
-for (var frameworkName in frameworks.frameworks) {
-  if (!frameworks.frameworks.hasOwnProperty(frameworkName)) continue;
-  var frameworkPermissions = frameworks.frameworks[frameworkName].permissions
+for (var frameworkName in frameworkPermissions) {
+  if (!frameworkPermissions.hasOwnProperty(frameworkName)) continue;
   frameworkPerms[getFrameworkPerm(frameworkName)] = getRootFrameworkPermission(frameworkName)
-
-  if(frameworkPermissions) {
-    for(var permissionKey in frameworkPermissions) {
-      if (!frameworkPermissions.hasOwnProperty(permissionKey)) continue;
-      frameworkPerms[getFrameworkPerm(frameworkName, permissionKey)] = frameworkPermissions[permissionKey]
+  if (frameworkPermissions[frameworkName]) {
+    for (var permissionKey in frameworkPermissions[frameworkName]) {
+      if (!frameworkPermissions[frameworkName].hasOwnProperty(permissionKey)) continue;
+      frameworkPerms[getFrameworkPerm(frameworkName, permissionKey)] = frameworkPermissions[frameworkName][permissionKey]
     }
   }
 }
