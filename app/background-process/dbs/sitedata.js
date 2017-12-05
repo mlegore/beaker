@@ -124,6 +124,9 @@ export async function query (values) {
 
 async function extractOrigin (originURL) {
   var urlp = url.parse(originURL)
+  if(urlp.protocol === 'ssb-blob:') {
+    return (urlp.protocol + urlp.path)
+  }
   if (!urlp || !urlp.host || !urlp.protocol) return
   if (urlp.protocol === 'dat:') {
     urlp.host = await datDns.resolveName(urlp.host)

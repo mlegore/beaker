@@ -44,9 +44,9 @@ export default function (sbot) {
   }
 
   return function (request, callback) {
-    var parsed = URL.parse(request.url, true)
-    var hash = decodeURIComponent(parsed.path.slice(1))
-    
+    var parsed = URL.parse(request.url, true, true)
+    var hash = decodeURIComponent(parsed.path)
+
     waitFor(hash, function (_, has) {
       if (!has) {
         callback({
