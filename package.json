@@ -109,6 +109,9 @@
     "logo": "https://opencollective.com/opencollective/logo.txt"
   },
   "dependencies": {
+    "adm-zip": "^0.4.7",
+    "atob": "^2.0.3",
+    "base32": "0.0.6",
     "pull-concat": "^1.1.1",
     "pull-identify-filetype": "^1.1.0",
     "pull-pause": "0.0.1",
