@@ -85,11 +85,18 @@ export default function (framework) {
       sbot.publish(message, cb)
     },
     since (cb) {
+      sbot.status((err, status) => {
+        if(err)
+          return cb(err)
+        cb(null, status.sync.since)
+      })
+    },
+    sinceStream () {
       var updateSince = function () {
         sbot.status((err, status) => {
           if(err)
             throw err
-          cb('update', status.sync.since)
+          cb('data', status.sync.since)
           setTimeout(updateSince, 200)
         })
       }

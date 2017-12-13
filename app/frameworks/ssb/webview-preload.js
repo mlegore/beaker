@@ -13,9 +13,18 @@ export default async function (frameworkLoader, options) {
   // Wait for ssb to be ready
   await ssbRpc.ready()
 
-  var since = Observable()
-  var eventTarget = ssbRpc.since()
-  eventTarget.addEventListener('update', event => since.set(event.data))
+  var manifest = {
+    get: 'async',
+    createFeedStream: 'source',
+    createLogStream: 'source',
+    createHistoryStream: 'source',
+    createUserStream: 'source',
+    messagesByType: 'source',
+    whoami: 'async',
+    publish: 'async',
+    since: 'async',
+    manifest: 'sync'
+  }
 
   var ssb = {
     ready () {
@@ -57,8 +66,11 @@ export default async function (frameworkLoader, options) {
     requestPublishPermission (type) {
       return frameworkLoader.requestFrameworkPermission('publish:' + type)
     },
-    since
+    since (cb) {
+      return ssbRpc.since(cb)
+    },
+    manifest
   }
 
-  return afterParty(ssb)
+  return ssb
 }
