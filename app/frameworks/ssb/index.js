@@ -6,6 +6,7 @@ import {cbPromise} from '../../lib/functions'
 import protocolHandler from './protocol'
 import manifest from './manifest'
 import permissions from './permissions'
+import onConnect from './muxrpcApi'
 
 export default function (framework) {
   var party = require('ssb-party')
@@ -101,6 +102,9 @@ export default function (framework) {
         })
       }
       updateSince()
+    },
+    connect () {
+      return onConnect(sbot, framework, this.sender)
     }
   }
 

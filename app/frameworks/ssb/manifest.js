@@ -7,4 +7,5 @@ export default {
   createUserStream: 'readable',
   since: 'async',
   publish: 'async',
+  connect: 'duplex'
 }

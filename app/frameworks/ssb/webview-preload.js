@@ -69,6 +69,9 @@ export default async function (frameworkLoader, options) {
     since (cb) {
       return ssbRpc.since(cb)
     },
+    connect () {
+      return ssbRpc.connect()
+    },
     manifest
   }
 
