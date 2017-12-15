@@ -2,7 +2,7 @@ import {app} from 'electron'
 import sqlite3 from 'sqlite3'
 import path from 'path'
 import url from 'url'
-import rpc from 'pauls-electron-rpc'
+import rpc from 'mikes-electron-rpc'
 import manifest from '../../lib/api-manifests/internal/sitedata'
 import { cbPromise } from '../../lib/functions'
 import { setupSqliteDB } from '../../lib/bg/db'
@@ -124,7 +124,7 @@ export async function query (values) {
 
 async function extractOrigin (originURL) {
   var urlp = url.parse(originURL)
-  if(urlp.protocol === 'ssb-blob:') {   
+  if(urlp.protocol === 'ssb-blob:') {
     return (urlp.protocol + urlp.path.split('/')[0])
   }
   if (!urlp || !urlp.host || !urlp.protocol) return

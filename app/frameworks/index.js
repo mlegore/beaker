@@ -5,7 +5,7 @@ import { path, join } from 'path'
 import hello from './hello/index.js'
 import ssb from './ssb/index.js'
 import { Writable } from 'stream';
-import rpc from 'pauls-electron-rpc'
+import rpc from 'mikes-electron-rpc'
 import {getFrameworkPerm} from '../lib/strings'
 import {queryPermission as queryPerm} from '../background-process/ui/permissions'
 
