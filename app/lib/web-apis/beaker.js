@@ -1,6 +1,6 @@
 /* globals DatArchive */
 
-import rpc from 'pauls-electron-rpc'
+import rpc from 'mikes-electron-rpc'
 import {EventTarget, bindEventStream, fromEventStream} from './event-target'
 import errors from 'beaker-error-constants'
 

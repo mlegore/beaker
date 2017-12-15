@@ -1,5 +1,5 @@
 import {ipcMain} from 'electron'
-import rpc from 'pauls-electron-rpc'
+import rpc from 'mikes-electron-rpc'
 import {internalOnly, secureOnly} from '../lib/bg/rpc'
 
 // internal manifests

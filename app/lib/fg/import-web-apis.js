@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import rpc from 'pauls-electron-rpc'
+import rpc from 'mikes-electron-rpc'
 
 // method which will populate window.beaker with the APIs deemed appropriate for the protocol
 export default function () {

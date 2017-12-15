@@ -1,4 +1,4 @@
-import rpc from 'pauls-electron-rpc'
+import rpc from 'mikes-electron-rpc'
 import errors from 'beaker-error-constants'
 import parseDatURL from 'parse-dat-url'
 import datArchiveManifest from '../api-manifests/external/dat-archive'
