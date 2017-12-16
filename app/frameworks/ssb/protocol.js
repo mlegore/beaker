@@ -2,10 +2,8 @@ import concat from 'pull-concat/buffer'
 import URL from 'url'
 import ident from 'pull-identify-filetype'
 import mime from 'mime-types'
-import getFileType from 'file-type'
 import pull from 'pull-stream'
 import {unzipArchive, hashArchiveExists, getFromArchive} from './archive'
-import { toStream } from '../../lib/functions'
 
 export default function (sbot) {
   var waitFor = function (hash, cb) {
@@ -34,10 +32,8 @@ export default function (sbot) {
         if(err) {
           callback({
             statusCode: 500,
-            headers: {
-              'Content-Type': 'text/html'
-            },
-            data: toStream(JSON.stringify(err))
+            mimeType: 'text/html',
+            data: Buffer.from(JSON.stringify(err))
           })
         } else {
           if (fileType === 'zip' && subDir !== null) {
@@ -45,10 +41,8 @@ export default function (sbot) {
           } else {
             callback({
               statusCode: 200,
-              headers: {
-                'Content-Type': fileType ? mime.lookup(fileType) : 'text/html'
-              },
-              data: toStream(buffer)})
+              mimeType: fileType ? mime.lookup(fileType) : 'text/html',
+              data: buffer})
           }
         }
       })
@@ -56,47 +50,32 @@ export default function (sbot) {
   }
 
   function serveFromArchive (hash, subDir, archiveBuffer, callback) {
-    let Duplex = require('stream').Duplex;
-
     var cb = function (err, buffer) {
       if (err) {
         if (err.code && err.code === "ENOENT") {
           callback({
             statusCode: 404,
-            headers: {
-              'Content-Type': 'text/html'
-            },
-            data: toStream('File not found')
+            mimeType: 'text/html',
+            data: Buffer.from('File not found')
           })
         } else {
           callback({
             statusCode: 500,
-            headers: {
-              'Content-Type': 'text/html'
-            },
-            data: toStream(JSON.stringify(err))
+            mimeType: 'text/html',
+            data: Buffer.from(JSON.stringify(err))
           })
         }
         return
       }
 
-      // We need to provide filetype for when suffix is not given
+      // We need to provide filetime for when suffix is not given
       if (subDir === '') {
         callback({
           statusCode: 200,
-          headers: {
-            'Content-Type': 'text/html'
-          },
-          data: toStream(buffer)})
+          mimeType: 'text/html',
+          data: buffer})
       } else {
-        var ft = getFileType(buffer)
-        callback({
-          statusCode: 200,
-          headers: {
-            'Content-Type': (ft && ft.mime) ? ft.mime : 'text/html'
-          },
-          data: toStream(buffer)
-        })
+        callback(buffer)
       }
     }
 
@@ -113,10 +92,8 @@ export default function (sbot) {
     if (!parsed.path) {
       return callback({
         statusCode: 400,
-        headers: {
-          'Content-Type': 'text/html'
-        },
-        data: toStream('Bad url')
+        mimeType: 'text/html',
+        data: Buffer.from('Bad url')
       })
     }
 
@@ -134,10 +111,8 @@ export default function (sbot) {
       if (!has) {
         callback({
           statusCode: 404,
-          headers: {
-            'Content-Type': 'text/html'
-          },
-          data: toStream('File not found')
+          mimeType: 'text/html',
+          data: Buffer.from('File not found')
         })
         return
       } else {
