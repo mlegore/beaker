@@ -1,3 +1,6 @@
+import url from 'url'
+import { Readable } from 'stream'
+import datDns from '../background-process/networks/dat/dns'
 
 // helper to make node-style CBs into promises
 // usage: cbPromise(cb => myNodeStyleMethod(cb)).then(...)
@@ -55,6 +58,26 @@ export function throttle (func, wait, options) {
   }
 
   return throttled
+}
+
+export async function extractOrigin (originURL) {
+  var urlp = url.parse(originURL)
+  if(urlp.protocol === 'ssb-blob:') {
+    return (urlp.protocol + urlp.path.split('/')[0])
+  }
+  if (!urlp || !urlp.host || !urlp.protocol) return
+  if (urlp.protocol === 'dat:') {
+    urlp.host = await datDns.resolveName(urlp.host)
+  }
+  return (urlp.protocol + urlp.host)
+}
+
+export function toStream (data) {
+  const readable = new Readable()
+  readable._read = function () {} // _read is required but you can noop it
+  readable.push(data)
+  readable.push(null)
+  return readable
 }
 
 // Underscore.js
