@@ -22,8 +22,7 @@
     "gulp-watch": "^4.3.5",
     "into-stream": "^2.0.1",
     "q": "^1.4.1",
-    "rollup": "^0.41.0",
-    "yargs": "^4.2.0"
+    "rollup": "^0.41.0"
   },
   "optionalDependencies": {
     "appdmg": "^0.4.5",
@@ -101,7 +100,8 @@
     "release-win": "build -w -p never",
     "start": "gulp start",
     "start-logging": "DEBUG=*,-bittorrent-dht $(node -e \"console.log(require('electron'))\") -r trace ./app",
-    "watch": "gulp start-watch"
+    "watch": "gulp start-watch",
+    "break": "gulp break"
   },
   "collective": {
     "type": "opencollective",
@@ -117,6 +117,9 @@
     "pull-concat": "^1.1.1",
     "pull-identify-filetype": "^1.1.0",
     "pull-pause": "0.0.1",
-    "ssb-party": "^0.5.1"
+    "ssb-afterparty": "0.0.1",
+    "ssb-party": "^0.5.1",
+    "stream-to-buffer": "^0.1.0",
+    "yargs": "^4.2.0"
   }
 }

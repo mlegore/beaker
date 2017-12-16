@@ -31,12 +31,18 @@ import * as openURL from './background-process/open-url'
 
 import frameworks from './frameworks/index.js'
 
+var argv = require('yargs').argv
+
 // read config from env vars
 setupDebugLogger()
 if (process.env.beaker_user_data_path) {
   console.log('User data path set by environment variables')
   console.log('userData:', process.env.beaker_user_data_path)
   app.setPath('userData', process.env.beaker_user_data_path)
+}
+
+if (argv.intercept) {
+  process.env.intercept = true
 }
 
 process.on('unhandledRejection', (reason, p) => {

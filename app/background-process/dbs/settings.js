@@ -35,6 +35,10 @@ export function get (key) {
   if (key === 'noWelcomeTab') {
     return (process.env.beaker_no_welcome_tab == 1)
   }
+  if (key === 'intercept8080') {
+    return process.env.intercept
+  }
+
   // stored values
   return setupPromise.then(v => cbPromise(cb => {
     db.get(`SELECT value FROM settings WHERE key = ?`, [key], (err, row) => {
