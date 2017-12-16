@@ -2,6 +2,7 @@ import pull from 'pull-stream'
 import pullStringify from 'pull-stringify'
 import fromPull from 'pull-stream-to-stream'
 import { Readable, Writable } from 'stream'
+import URL from 'url'
 import { extractOrigin, toStream } from '../../lib/functions'
 const limitHeader = 'limit'
 const startHeader = 'start'
@@ -22,12 +23,20 @@ export default function channelProtocol (createChannel) {
     if (referrerOrigin !== pathOrigin) {
       return callback({
         statusCode: 401,
-        data: toStream('cross-origin scripting forbidden')
+        mimeType: 'text/html',
+        data: Buffer.from('cross-origin scripting forbidden')
       })
     }
 
-    var limit = request.headers[limitHeader]
-    var start = request.headers[startHeader]
+    var urlp = URL.parse(request.url, true)
+
+    var limit = urlp.query['limit']
+    var start = urlp.query['start']
+    if (request.headers) {
+      limit = request.headers[limitHeader] || urlp.query['limit']
+      start = request.headers[startHeader] || urlp.query['start']
+    }
+
     if(!limit || limit > maxLimit) {
       limit = maxLimit
     } else {
@@ -40,22 +49,13 @@ export default function channelProtocol (createChannel) {
 
     var sender = getSender(request)
     var stream = await createChannel(sender, start, limit)
-    let r = new Readable({
-      objectMode: false,
-      read() {}
-    })
 
     pull(
       stream,
       pullStringify.ldjson(),
-      pull.drain(item => {
-        r.push(item)
-      }, () => r.push(null))
+      pull.concat(function (err, buffer) {
+        callback(Buffer.from(buffer))
+      })
     )
-
-    callback({
-      statusCode: 200,
-      data: r
-    })
   }
 }

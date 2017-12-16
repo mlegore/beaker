@@ -10,6 +10,9 @@ import onConnect from './muxrpcApi'
 import channelProtocol from './channelProtocol'
 import URL from 'url'
 import http from 'http'
+import streamToBuffer from 'stream-to-buffer'
+import getFileType from 'file-type'
+import {get as getSetting} from '../../background-process/dbs/settings'
 
 export default function (framework) {
   var party = require('ssb-party')
@@ -122,7 +125,7 @@ export default function (framework) {
   var setup = async function () {
     framework.exportAPI(manifest, api)
     var sbot = await partyReady
-    protocol.registerStreamProtocol('ssb-blob', (request, callback) => {
+    protocol.registerBufferProtocol('ssb-blob', (request, callback) => {
       var parsed = URL.parse(request.url, true, true)
       if (parsed.path === '/$$$') {
         channelProtocol(createLogStream)(request, callback)
@@ -133,27 +136,55 @@ export default function (framework) {
       if (error) console.error('Failed to register protocol')
     })
 
-    protocol.interceptStreamProtocol('http', (request, callback) => {
-      var parsed = URL.parse(request.url, true, true)
-      if (parsed.path === '/$$$') {
-        channelProtocol(createLogStream)(request,callback)
-      } else {
-        var opts = {
-          hostname: parsed.hostname,
-          path: parsed.path,
-          port: parsed.port,
-          headers: request.headers
+    if (getSetting('intercept8080')) {
+      console.warn('intercepting 8080 to serve ssb logStream to http://localhost:8080/$$$')
+      protocol.interceptBufferProtocol('http', (request, callback) => {
+        var parsed = URL.parse(request.url, true, true)
+        if (parsed.pathname === '/$$$') {
+          channelProtocol(createLogStream)(request, callback)
+        } else {
+          var opts = {
+            hostname: parsed.hostname,
+            path: parsed.path,
+            port: parsed.port,
+            headers: request.headers
+          }
+
+          var req = http.get(opts, res => {
+            streamToBuffer(res, (err, buffer) => {
+              if(err)
+                return callback({
+                  statusCode: 500,
+                  mimeType: 'text/html',
+                  data: Buffer.from(JSON.stringify(err))
+                })
+
+              var ct = res.headers['content-type']
+              if (ct) {
+                ct = ct.split(';')[0]
+              }
+
+              if (!ct) {
+                var ft = getFileType(buffer)
+                if (ft && ft.mime) {
+                  ct = ft
+                }
+              }
+
+              callback({
+                statusCode: 200,
+                mimeType: ct ? ct : 'text/html',
+                data: buffer
+              })
+            })
+          })
+
+          req.on('error', e => console.error(e))
         }
-
-        var req = http.get(opts, res => {
-          callback(res)
-        })
-
-        req.on('error', e => console.error(e))
-      }
-    }, (error) => {
-      if (error) console.error('Failed to register protocol')
-    })
+      }, (error) => {
+        if (error) console.error('Failed to register protocol')
+      })
+    }
   }
 
   return {
