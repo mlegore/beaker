@@ -55,13 +55,11 @@ function createApi (sbot, framework, sender) {
       sbot.publish(message, cb)
     },
     since (cb) {
-      // 
-      cb(null, 10000)
-      /*sbot.status((err, status) => {
+      sbot.status((err, status) => {
         if(err)
           return cb(err)
         cb(null, status.sync.since)
-      })*/
+      })
     },
     manifest () {
       return manifest
