@@ -3,10 +3,13 @@ import toStream from 'pull-stream-to-stream'
 import pull from 'pull-stream'
 import {protocol} from 'electron'
 import {cbPromise} from '../../lib/functions'
-import protocolHandler from './protocol'
+import blobProtocolHandler from './protocol'
 import manifest from './manifest'
 import permissions from './permissions'
 import onConnect from './muxrpcApi'
+import channelProtocol from './channelProtocol'
+import URL from 'url'
+import http from 'http'
 
 export default function (framework) {
   var party = require('ssb-party')
@@ -39,7 +42,6 @@ export default function (framework) {
         stream,
         pull.asyncMap((message, cb) => unboxMessage(sbot, message, cb)))
     }
-
     return stream
   }
 
@@ -108,10 +110,48 @@ export default function (framework) {
     }
   }
 
+  var createLogStream = async function (sender, start, limit) {
+    var permission = await framework.queryPermission(undefined, sender)
+    if(!permission) {
+      throw 'cannot publish access this api'
+    }
+
+    return sbot.createLogStream({ gt: start, limit, seq: true, values: true })
+  }
+
   var setup = async function () {
     framework.exportAPI(manifest, api)
     var sbot = await partyReady
-    protocol.registerBufferProtocol('ssb-blob', protocolHandler(sbot), (error) => {
+    protocol.registerStreamProtocol('ssb-blob', (request, callback) => {
+      var parsed = URL.parse(request.url, true, true)
+      if (parsed.path === '/$$$') {
+        channelProtocol(createLogStream)(request, callback)
+      } else {
+        blobProtocolHandler(sbot)(request, callback)
+      }
+    }, (error) => {
+      if (error) console.error('Failed to register protocol')
+    })
+
+    protocol.interceptStreamProtocol('http', (request, callback) => {
+      var parsed = URL.parse(request.url, true, true)
+      if (parsed.path === '/$$$') {
+        channelProtocol(createLogStream)(request,callback)
+      } else {
+        var opts = {
+          hostname: parsed.hostname,
+          path: parsed.path,
+          port: parsed.port,
+          headers: request.headers
+        }
+
+        var req = http.get(opts, res => {
+          callback(res)
+        })
+
+        req.on('error', e => console.error(e))
+      }
+    }, (error) => {
       if (error) console.error('Failed to register protocol')
     })
   }
