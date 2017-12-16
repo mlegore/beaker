@@ -5,7 +5,7 @@
     "asar": "^0.11.0",
     "browserify": "^13.0.1",
     "chai": "^3.5.0",
-    "electron": "1.7.4",
+    "electron": "1.8.2-beta.3",
     "electron-builder": "~10.4.1",
     "electron-rebuild": "^1.6.0",
     "eslint": "^4.2.0",
@@ -21,6 +21,7 @@
     "gulp-util": "^3.0.6",
     "gulp-watch": "^4.3.5",
     "into-stream": "^2.0.1",
+    "node-gyp": "^3.6.2",
     "q": "^1.4.1",
     "rollup": "^0.41.0",
     "yargs": "^4.2.0"
@@ -96,7 +97,7 @@
     "build": "gulp build",
     "burnthemall": "node ./tasks/burnthemall.js",
     "lint": "eslint --ignore-pattern 'color-thief.js' --ignore-pattern 'app/node_modules' --ignore-pattern '*.build.js' app",
-    "rebuild": "electron-rebuild && gulp rebuild",
+    "rebuild": "gulp rebuild",
     "release-mac": "build -m -p never",
     "release-win": "build -w -p never",
     "start": "gulp start",
@@ -109,6 +110,7 @@
     "logo": "https://opencollective.com/opencollective/logo.txt"
   },
   "dependencies": {
+    "accord": "^0.27.3",
     "adm-zip": "^0.4.7",
     "atob": "^2.0.3",
     "base32": "0.0.6",
@@ -116,6 +118,7 @@
     "pull-concat": "^1.1.1",
     "pull-identify-filetype": "^1.1.0",
     "pull-pause": "0.0.1",
+    "ssb-afterparty": "0.0.1",
     "ssb-party": "^0.5.1"
   }
 }
