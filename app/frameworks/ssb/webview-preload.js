@@ -19,6 +19,7 @@ export default async function (frameworkLoader, options) {
     createLogStream: 'source',
     createHistoryStream: 'source',
     createUserStream: 'source',
+    latest: 'source',
     messagesByType: 'source',
     whoami: 'async',
     publish: 'async',
@@ -39,6 +40,10 @@ export default async function (frameworkLoader, options) {
     },
     createLogStream (opts, raw) {
       var stream = ssbRpc.createLogStream(opts)
+      return raw ? stream : toPull.source(stream)
+    },
+    latest (raw) {
+      var stream = ssbRpc.latest()
       return raw ? stream : toPull.source(stream)
     },
     messagesByType (opts, raw) {

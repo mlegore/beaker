@@ -62,6 +62,9 @@ export default function (framework) {
     createLogStream (opts = {}) {
       return toStream.source(sbot.createLogStream(opts))
     },
+    latest () {
+      return toStream.source(sbot.latest())
+    },
     messagesByType (opts = {}) {
       return toStream.source(sbot.messagesByType(opts))
     },
@@ -122,12 +125,26 @@ export default function (framework) {
     return sbot.createLogStream({ gt: start, limit, seq: true, values: true })
   }
 
+  var getRealBlobPath = function (path) {
+    if(!path) {
+      return null
+    }
+
+    var parts = path.split('/')
+    if (parts.length > 1) {
+      return parts.slice(1).join('/')
+    }
+
+    return null
+  }
+
   var setup = async function () {
     framework.exportAPI(manifest, api)
     var sbot = await partyReady
     protocol.registerBufferProtocol('ssb-blob', (request, callback) => {
       var parsed = URL.parse(request.url, true, true)
-      if (parsed.path === '/$$$') {
+      var realPath = getRealBlobPath(parsed.pathname)
+      if (realPath && realPath.startsWith('/$$$')) {
         channelProtocol(createLogStream)(request, callback)
       } else {
         blobProtocolHandler(sbot)(request, callback)

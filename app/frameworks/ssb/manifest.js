@@ -3,6 +3,7 @@ export default {
   whoami: 'async',
   createFeedStream: 'readable',
   createLogStream: 'readable',
+  latest: 'readable',
   messagesByType: 'readable',
   createUserStream: 'readable',
   since: 'async',

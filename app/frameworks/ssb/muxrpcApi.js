@@ -7,6 +7,7 @@ var manifest = {
   createLogStream: 'source',
   createHistoryStream: 'source',
   createUserStream: 'source',
+  latest: 'source',
   messagesByType: 'source',
   whoami: 'async',
   publish: 'async',
@@ -24,6 +25,9 @@ function createApi (sbot, framework, sender) {
     },
     createLogStream (opts = {}) {
       return sbot.createLogStream(opts)
+    },
+    latest () {
+      return sbot.latest()
     },
     messagesByType (opts = {}) {
       return sbot.messagesByType(opts)
