@@ -1,4 +1,4 @@
-import rpc from 'mikes-electron-rpc'
+import rpc from 'pauls-electron-rpc'
 import { EventTarget, bindEventStream, fromEventStream } from './event-target'
 import errors from 'beaker-error-constants'
 import frameworkManifest from '../api-manifests/external/framework'

@@ -5,7 +5,7 @@ import unusedFilename from 'unused-filename'
 import speedometer from 'speedometer'
 import emitStream from 'emit-stream'
 import EventEmitter from 'events'
-import rpc from 'mikes-electron-rpc'
+import rpc from 'pauls-electron-rpc'
 import manifest from '../../lib/api-manifests/internal/downloads'
 import { internalOnly } from '../../lib/bg/rpc'
 
