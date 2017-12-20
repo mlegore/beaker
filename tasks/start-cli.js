@@ -15,16 +15,16 @@ module.exports = function () {
 
   if(process.env.inspect) {
     if(process.env.inspect === 'break') {
-      args.unshift('--inspect-brk')
+      args.push('--inspect-brk')
     } else {
-      args.unshift('--inspect')
+      args.push('--inspect')
     }
   }
 
-  args.unshift('./app')
+  args.push('./app')
   if (utils.getEnvName() === 'development') {
     console.log('intercepting 8080')
-    args.unshift('--intercept')
+    args.push('--intercept')
   }
 
   childProcess.spawn(electron, args, {
