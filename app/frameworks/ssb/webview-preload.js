@@ -2,7 +2,6 @@ import errors from 'beaker-error-constants'
 import {cbPromise} from '../../lib/functions'
 import frameworkManifest from './manifest'
 import toPull from 'stream-to-pull-stream'
-import afterParty from './afterparty'
 import Observable from 'obv'
 
 export default async function (frameworkLoader, options) {
