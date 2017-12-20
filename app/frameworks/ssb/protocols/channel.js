@@ -3,7 +3,7 @@ import pullStringify from 'pull-stringify'
 import fromPull from 'pull-stream-to-stream'
 import { Readable, Writable } from 'stream'
 import URL from 'url'
-import { extractOrigin, toStream } from '../../lib/functions'
+import { extractOrigin, toStream } from '../../../lib/functions'
 const limitHeader = 'limit'
 const startHeader = 'start'
 const maxLimit = 2000
