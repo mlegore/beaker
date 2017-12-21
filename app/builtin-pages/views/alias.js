@@ -11,11 +11,23 @@ const BEGIN_LOAD_OFFSET = 500
 
 // visits, cached in memory
 var aliases = []
+var about = {}
 var isAtEnd = false
 
 function fetch (cb) {
   var author = ''
   var url = new URL(window.location.href)
+  var done = false
+
+  beaker.ssb.getAbout((err, val) => {
+    about = val
+
+    if(done) {
+      cb()
+    }
+    done = true
+  })
+
   if (author) {
     beaker.ssb.getAliases(author, (err, val) => {
       cb()
@@ -32,7 +44,10 @@ function fetch (cb) {
         }
       })
 
-      cb()
+      if(done) {
+        cb()
+      }
+      done = true
     })
   }
 }
@@ -42,15 +57,44 @@ fetch(render)
 // rendering
 // =
 
+function getAliasUrl(author, name) {
+  return 'ssb://' + encodeURIComponent(author) + '~' + encodeURIComponent(name)
+}
+
+function getBlobUrl(hash) {
+  return 'ssb-blob://' + encodeURIComponent(hash)
+}
+
+function getAbout(author) {
+  var aboutAuthor = {}
+  Object.keys(about[author]).forEach(key => {
+    // Use only self-described characteristics
+    if(about[author][key][author]) {
+      aboutAuthor[key] = about[author][key][author][0]
+    }
+  })
+
+  return aboutAuthor
+}
+
 function render () {
   var rowEls = []
   var lastDate = moment().startOf('day').add(1, 'day')
 
   aliases.forEach(author => {
-    var authorEls = author.aliases.map(alias => yo`<div class="">${alias.name} => ${alias.content.about} (${alias.content.description})</div>`)
-    rowEls.push(yo`<div class="">${author.author} ${authorEls}</div>`)
+    var aboutAuthor = getAbout(author.author)
+    console.log(aboutAuthor)
+    var authorEls = author.aliases.map(alias => yo`<div class="links-list"><a href="${getAliasUrl(author.author, alias.name)}">
+        <strong>${alias.name}</strong> => ${alias.content.about} (${alias.content.description})
+      </a></div>`)
+    rowEls.push(yo`<div class="">
+        <span class="user-row">
+          <img class="profile" src="${getBlobUrl(aboutAuthor.image)}" />
+          ${aboutAuthor.name} - ${author.author}
+        </span>
+        ${authorEls}
+      </div>`)
   })
-
 
   // empty state
   if (rowEls.length == 0) {
