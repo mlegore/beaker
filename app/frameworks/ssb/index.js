@@ -178,6 +178,15 @@ export default function (framework) {
 
           cb(null, val)
         })
+      },
+      getAbout: function (cb) {
+        internalApi.aboutResource.about.get((err, val) => {
+          if (err) {
+            return cb(err)
+          }
+
+          cb(null, val)
+        })
       }
     })
 

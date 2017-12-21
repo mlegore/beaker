@@ -75,6 +75,7 @@ if (window.location.protocol === 'beaker:') {
   // bindEventStream(profilesRPC.createEventStream(), beaker.profiles) TODO
 
   beaker.ssb = {}
+  beaker.ssb.getAbout = ssbInternalRPC.getAbout
   beaker.ssb.getAliases = ssbInternalRPC.getAliases
 }
 

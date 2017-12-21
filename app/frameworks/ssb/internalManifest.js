@@ -1,3 +1,4 @@
 export default {
-  getAliases: 'async'
+  getAliases: 'async',
+  getAbout: 'async'
 }
