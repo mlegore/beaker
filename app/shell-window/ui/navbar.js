@@ -374,6 +374,39 @@ function renderPrettyLocation (value, isHidden, gotInsecureResponse, siteLoadErr
       // invalid URL, just use value
     }
   }
+  if (/^(ssb):/.test(value)) {
+    try {
+      var { protocol, host, pathname, search, hash } = new URL(value)
+      var hostVersion
+      if (protocol === 'ssb:') {
+        pathname = pathname.substring(2)
+        var pathParts = pathname.split('/')
+        host = pathParts.shift()
+        pathname = '/' + pathParts.join('/')
+
+        var hostParts = host.split('~')
+        host = hostParts[0]
+        if (host.length > 30) {
+          host = decodeURIComponent(host).substring(0,6) + '...'
+        }
+
+        if (hostParts.length === 2) {
+          host = host + '~' + hostParts[1]
+        }
+      }
+      var cls = 'protocol'
+      valueRendered = [
+        yo`<span class=${cls}>${protocol.slice(0, -1)}</span>`,
+        yo`<span class="syntax">://</span>`,
+        yo`<span class="host">${host}</span>`,
+        hostVersion ? yo`<span class="host-version">${hostVersion}</span>` : false,
+        yo`<span class="path">${pathname}${search}${hash}</span>`
+      ].filter(Boolean)
+    } catch (e) {
+      // invalid URL, just use value
+    }
+  }
+
 
   return yo`
     <div
