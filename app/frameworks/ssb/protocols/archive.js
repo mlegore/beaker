@@ -7,6 +7,10 @@ import AdmZip from 'adm-zip'
 
 var archiveStoragePath = path.join(app.getPath('userData'), 'ssb-archives')
 
+if (!fs.existsSync(archiveStoragePath)) {
+  fs.mkdirSync(archiveStoragePath);
+}
+
 export function hashArchiveExists (hash) {
   return fs.existsSync(getHashPath(hash))
 }
