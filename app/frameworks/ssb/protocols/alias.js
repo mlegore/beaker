@@ -8,25 +8,27 @@ export default function (sbot) {
       return callback({error: 400})
     }
 
-    var author = decodeURIComponent(pathParts.shift())
-    if (pathParts.length === 0) {
+    var aliasParts = pathParts.shift().split('~')
+
+    var author = decodeURIComponent(aliasParts.shift())
+    if (aliasParts.length === 0) {
       callback({
-        url: 'beaker://aliases/?author=' + encodeURIComponenet(author)
+        url: 'beaker://alias/?author=' + encodeURIComponenet(author)
       })
     } else {
-      var name = decodeURIComponent(pathParts.shift())
+      var name = decodeURIComponent(aliasParts.shift())
       var path = pathParts.join('/')
-
+      
       sbot.aboutResource.aliases.get((err, val) => {
         if (err) {
           console.error(err)
-          callback({error: 500})
+          return callback({error: 500})
         }
         if (!val || !val[author] || !val[author][name]) {
-          callback({error: 404})
+          return callback({error: 404})
         }
 
-        var url = val[author][name].about + '/' + path
+        var url = val[author][name].content.about + path
         callback({
           url: url,
           method: request.method,
