@@ -2,17 +2,31 @@ import party from 'ssb-party'
 import toStream from 'pull-stream-to-stream'
 import pull from 'pull-stream'
 import {protocol} from 'electron'
-import {cbPromise} from '../../lib/functions'
-import blobProtocolHandler from './protocol'
-import manifest from './manifest'
-import permissions from './permissions'
-import onConnect from './muxrpcApi'
-import channelProtocol from './channelProtocol'
 import URL from 'url'
 import http from 'http'
 import streamToBuffer from 'stream-to-buffer'
 import getFileType from 'file-type'
+import aboutResource from 'ssb-about-resource'
+import plugify from 'ssb-afterparty/plugify'
+import path from 'path'
+import {app} from 'electron'
+import fs from 'fs'
+
+import {cbPromise} from '../../lib/functions'
 import {get as getSetting} from '../../background-process/dbs/settings'
+
+import manifest from './manifest'
+import internalManifest from './internalManifest'
+import permissions from './permissions'
+import onConnect from './muxrpcApi'
+import aliasProtocol from './protocols/alias'
+import blobProtocol from './protocols/blob'
+import channelProtocol from './protocols/channel'
+
+var flumedbStoragePath = path.join(app.getPath('userData'), 'flumedb')
+if (!fs.existsSync(flumedbStoragePath)) {
+  fs.mkdirSync(flumedbStoragePath);
+}
 
 export default function (framework) {
   var party = require('ssb-party')
@@ -139,17 +153,47 @@ export default function (framework) {
   }
 
   var setup = async function () {
-    framework.exportAPI(manifest, api)
     var sbot = await partyReady
+    var sbotOptions = {
+      flumeOpts: { dir: flumedbStoragePath }
+    }
+    var internalApi = plugify(sbot, sbotOptions).use(aboutResource)
+
+    framework.exportAPI(manifest, api)
+    framework.exportInternalAPI(internalManifest, {
+      getAliases: function (author, cb) {
+        if ('function' === typeof author) {
+          cb = author
+          author = null
+        }
+
+        internalApi.aboutResource.aliases.get((err, val) => {
+          if (err) {
+            return cb(err)
+          }
+
+          if (author) {
+            return cb(null, val[author])
+          }
+
+          cb(null, val)
+        })
+      }
+    })
+
     protocol.registerBufferProtocol('ssb-blob', (request, callback) => {
       var parsed = URL.parse(request.url, true, true)
       var realPath = getRealBlobPath(parsed.pathname)
       if (realPath && realPath.startsWith('/$$$')) {
         channelProtocol(createLogStream)(request, callback)
       } else {
-        blobProtocolHandler(sbot)(request, callback)
+        blobProtocol(sbot)(request, callback)
       }
     }, (error) => {
+      if (error) console.error('Failed to register protocol')
+    })
+
+    protocol.registerHttpProtocol('ssb', aliasProtocol(sbot), (error) => {
       if (error) console.error('Failed to register protocol')
     })
 

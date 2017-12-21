@@ -8,7 +8,7 @@ import { Writable } from 'stream';
 import rpc from 'pauls-electron-rpc'
 import {getFrameworkPerm} from '../lib/strings'
 import {queryPermission as queryPerm} from '../background-process/ui/permissions'
-import {internalOnly} from '../../lib/bg/rpc'
+import {internalOnly} from '../lib/bg/rpc'
 
 function emitterAPIToStream(method) {
   return (...args) => {

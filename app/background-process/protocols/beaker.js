@@ -214,6 +214,12 @@ async function beakerServer (req, res) {
   if (requestUrl === 'beaker://dat-sidebar/' || requestUrl.startsWith('beaker://dat-sidebar/')) {
     return cb(200, 'OK', 'text/html', path.join(__dirname, 'builtin-pages/dat-sidebar.html'))
   }
+  if (requestUrl === 'beaker://alias/') {
+    return cb(200, 'OK', 'text/html; charset=utf-8', path.join(__dirname, 'builtin-pages/alias.html'))
+  }
+  if (requestUrl === 'beaker://alias/main.js') {
+    return cb(200, 'OK', 'application/javascript; charset=utf-8', path.join(__dirname, 'builtin-pages/build/alias.build.js'))
+  }
 
   // modals
   if (requestUrl === 'beaker://create-archive-modal/') {
