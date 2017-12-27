@@ -9,6 +9,7 @@ import rpc from 'pauls-electron-rpc'
 import {getFrameworkPerm} from '../lib/strings'
 import {queryPermission as queryPerm} from '../background-process/ui/permissions'
 import {internalOnly} from '../lib/bg/rpc'
+import {getPermission} from '../background-process/web-apis/framework'
 
 function emitterAPIToStream(method) {
   return (...args) => {
@@ -34,6 +35,10 @@ function emitterAPIToStream(method) {
 }
 
 function framework (frameworkName) {
+  var checkPermissions = function (event, methodName, args) {
+    return (event && event.sender && getPermission(event.sender.getURL(), frameworkName))
+  }
+
   return {
     exportInternalAPI (manifest, api) {
       // Extend api to support EventEmitters and Listeners
@@ -61,7 +66,7 @@ function framework (frameworkName) {
         return acc
       }, {})
 
-      rpc.exportAPI('framework/' + frameworkName, manifest, api)
+      rpc.exportAPI('framework/' + frameworkName, manifest, api, checkPermissions)
     },
     async queryPermission (frameworkPerm, sender) {
       var perm = getFrameworkPerm(frameworkName, frameworkPerm)

@@ -4,7 +4,7 @@ import path from 'path'
 import url from 'url'
 import rpc from 'pauls-electron-rpc'
 import manifest from '../../lib/api-manifests/internal/sitedata'
-import { cbPromise } from '../../lib/functions'
+import { cbPromise, extractOrigin } from '../../lib/functions'
 import { setupSqliteDB } from '../../lib/bg/db'
 import { internalOnly } from '../../lib/bg/rpc'
 import datDns from '../networks/dat/dns'
@@ -121,18 +121,6 @@ export async function query (values) {
 
 // internal methods
 // =
-
-async function extractOrigin (originURL) {
-  var urlp = url.parse(originURL)
-  if(urlp.protocol === 'ssb-blob:') {
-    return (urlp.protocol + urlp.path.split('/')[0])
-  }
-  if (!urlp || !urlp.host || !urlp.protocol) return
-  if (urlp.protocol === 'dat:') {
-    urlp.host = await datDns.resolveName(urlp.host)
-  }
-  return (urlp.protocol + urlp.host)
-}
 
 migrations = [
   // version 1
