@@ -55,6 +55,10 @@ export function setup () {
   listenRandomPort(server, { host: '127.0.0.1' }, (err, port) => { serverPort = port })
 }
 
+export function getBeakerServerInfo () {
+  return {serverPort, requestNonce}
+}
+
 // internal methods
 // =
 
