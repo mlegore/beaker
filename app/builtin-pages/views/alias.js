@@ -13,10 +13,10 @@ const BEGIN_LOAD_OFFSET = 500
 var aliases = []
 var about = {}
 var isAtEnd = false
-
+var single = false
 function fetch (cb) {
-  var author = ''
   var url = new URL(window.location.href)
+  var author = url.searchParams.get('author')
   var done = false
 
   beaker.ssb.getAbout((err, val) => {
@@ -30,7 +30,19 @@ function fetch (cb) {
 
   if (author) {
     beaker.ssb.getAliases(author, (err, val) => {
-      cb()
+      single = true
+      aliases = [{
+        author,
+        aliases: Object.keys(val).map(name => {
+          var entry = Object.assign({}, val[name], { name })
+          return entry
+        })
+      }]
+
+      if(done) {
+        cb()
+      }
+      done = true
     })
   } else {
     beaker.ssb.getAliases((err, entries) => {
