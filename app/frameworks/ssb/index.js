@@ -152,6 +152,8 @@ export default function (framework) {
     return null
   }
 
+  var aliasRegex = /^[a-zA-Z0-9-_]+$/;
+
   var setup = async function () {
     var sbot = await partyReady
     var sbotOptions = {
@@ -187,6 +189,32 @@ export default function (framework) {
 
           cb(null, val)
         })
+      },
+      publishAlias: function(message, cb) {
+        if(!message) {
+          return cb('Message must be provided')
+        }
+
+        if(!message['name'] || !message['about']) {
+          return cb('Message alias must be provided')
+        }
+
+        if(!aliasRegex.test(message['name'])) {
+          return cb('Alias not properly formed')
+        }
+
+        var msg = {
+          type: 'about-resource',
+          about: message['about'],
+          name: message['name']
+        }
+
+        if(message['description']) {
+          msg['description'] = message['description']
+        }
+
+        console.log(msg)
+        sbot.publish(msg, cb)
       }
     })
 
@@ -203,6 +231,17 @@ export default function (framework) {
     })
 
     protocol.registerHttpProtocol('ssb', aliasProtocol(sbot), (error) => {
+      if (error) console.error('Failed to register protocol')
+    })
+
+    protocol.registerHttpProtocol('ssb-extra', (request, callback) => {
+      var url = request.url.replace('ssb-extra:', 'ssb:')
+      callback({
+        url: url,
+        method: request.method,
+        uploadData: request.uploadData
+      })
+    }, (error) => {
       if (error) console.error('Failed to register protocol')
     })
 

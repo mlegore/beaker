@@ -1,4 +1,5 @@
 export default {
   getAliases: 'async',
-  getAbout: 'async'
+  getAbout: 'async',
+  publishAlias: 'async'
 }

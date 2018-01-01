@@ -77,6 +77,7 @@ if (window.location.protocol === 'beaker:') {
   beaker.ssb = {}
   beaker.ssb.getAbout = ssbInternalRPC.getAbout
   beaker.ssb.getAliases = ssbInternalRPC.getAliases
+  beaker.ssb.publishAlias = ssbInternalRPC.publishAlias
 }
 
 export default beaker

@@ -11,6 +11,7 @@ import { BrowserMenuNavbarBtn } from './navbar/browser-menu'
 import { PageMenuNavbarBtn } from './navbar/page-menu'
 import { DatSidebarBtn } from './navbar/dat-sidebar'
 import { SiteInfoNavbarBtn } from './navbar/site-info'
+import { AliasNavbarBtn } from './navbar/alias'
 import {pluralize} from '../../lib/strings'
 
 const KEYCODE_DOWN = 40
@@ -31,6 +32,7 @@ var datSidebarBtn = null
 var browserMenuNavbarBtn = null
 var pageMenuNavbarBtn = null
 var siteInfoNavbarBtn = null
+var aliasNavbarBtn = null
 
 // autocomplete data
 var autocompleteCurrentValue = null
@@ -47,6 +49,7 @@ export function setup () {
   browserMenuNavbarBtn = new BrowserMenuNavbarBtn()
   pageMenuNavbarBtn = new PageMenuNavbarBtn()
   siteInfoNavbarBtn = new SiteInfoNavbarBtn()
+  aliasNavbarBtn = new AliasNavbarBtn()
 }
 
 export function createEl (id) {
@@ -292,6 +295,12 @@ function render (id, page) {
   siteInfoNavbarBtn.siteInfoOverride = (page && page.siteInfoOverride)
   siteInfoNavbarBtn.siteLoadError = (page && page.siteLoadError)
 
+  aliasNavbarBtn.protocolInfo = (page && page.protocolInfo)
+  aliasNavbarBtn.siteInfo = (page && page.siteInfo)
+  aliasNavbarBtn.sitePerms = (page && page.sitePerms)
+  aliasNavbarBtn.siteInfoOverride = (page && page.siteInfoOverride)
+  aliasNavbarBtn.siteLoadError = (page && page.siteLoadError)
+
   // the main URL input
   var locationInput = yo`
     <input
@@ -326,6 +335,7 @@ function render (id, page) {
         ${locationInput}
         ${inpageFinder}
         ${zoomBtn}
+        ${aliasNavbarBtn.render()}
         ${datBtns}
         <button class=${bookmarkBtnClass} onclick=${onClickBookmark} title="Bookmark this page">
           <span class=${(page && !!page.bookmark) ? 'fa fa-star' : 'fa fa-star-o'}></span>
