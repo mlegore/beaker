@@ -13,6 +13,7 @@ import { DatSidebarBtn } from './navbar/dat-sidebar'
 import { SiteInfoNavbarBtn } from './navbar/site-info'
 import { AliasNavbarBtn } from './navbar/alias'
 import {pluralize} from '../../lib/strings'
+import {decodeAliasHost} from '../../lib/functions'
 
 const KEYCODE_DOWN = 40
 const KEYCODE_UP = 38
@@ -389,19 +390,14 @@ function renderPrettyLocation (value, isHidden, gotInsecureResponse, siteLoadErr
       var { protocol, host, pathname, search, hash } = new URL(value)
       var hostVersion
       if (protocol === 'ssb:') {
-        pathname = pathname.substring(2)
-        var pathParts = pathname.split('/')
-        host = pathParts.shift()
-        pathname = '/' + pathParts.join('/')
-
-        var hostParts = host.split('~')
-        host = hostParts[0]
-        if (host.length > 30) {
-          host = decodeURIComponent(host).substring(0,6) + '...'
+        var {name, feedId} = decodeAliasHost(host)
+        host = feedId
+        if (host.length > 15) {
+          host = host.substring(0,15) + '...'
         }
 
-        if (hostParts.length === 2) {
-          host = host + '~' + hostParts[1]
+        if (name) {
+          host = name + '.' + host
         }
       }
       var cls = 'protocol'

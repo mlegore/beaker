@@ -59,12 +59,12 @@ export class AliasNavbarBtn {
 
     var responseEl = ''
 
-    if (this.siteInfo && this.siteInfo.aliasPending) {
+    if (this.protocolInfo && this.protocolInfo.aliasPending) {
       responseEl = yo`<span class="pending">Pending...</span>`
-    } else if (this.siteInfo && this.siteInfo.aliasSuccess) {
+    } else if (this.protocolInfo && this.protocolInfo.aliasSuccess) {
       responseEl = yo`<span class="success-result">Saved!</span>`
-    } else if (this.siteInfo && this.siteInfo.aliasError && this.siteInfo.aliasError.message) {
-      responseEl = yo`<span class="failure">${this.siteInfo.aliasError.message}</span>`
+    } else if (this.protocolInfo && this.protocolInfo.aliasError && this.protocolInfo.aliasError.message) {
+      responseEl = yo`<span class="failure">${this.protocolInfo.aliasError.message}</span>`
     }
 
     // dropdown
@@ -92,22 +92,22 @@ export class AliasNavbarBtn {
   }
 
   onSubmit (e) {
-    if (this.siteInfo) {
-      this.siteInfo.aliasPending = true
-      this.siteInfo.aliasSuccess = false
-      this.siteInfo.aliasError = false
+    if (this.protocolInfo) {
+      this.protocolInfo.aliasPending = true
+      this.protocolInfo.aliasSuccess = false
+      this.protocolInfo.aliasError = false
     }
 
     this.update()
 
     beaker.ssb.publishAlias({name: this.alias, description: this.description, about: this.getUrl()}, (err, val) => {
-      this.siteInfo.aliasPending = false
+      this.protocolInfo.aliasPending = false
       if (err) {
-        this.siteInfo.aliasError = err
-        this.siteInfo.aliasSuccess = false
+        this.protocolInfo.aliasError = err
+        this.protocolInfo.aliasSuccess = false
       } else {
-        this.siteInfo.aliasError = null
-        this.siteInfo.aliasSuccess = true
+        this.protocolInfo.aliasError = null
+        this.protocolInfo.aliasSuccess = true
       }
 
       this.update()

@@ -11,13 +11,13 @@ import profilesManifest from '../api-manifests/internal/profiles'
 import ssbInternalManifest from '../../frameworks/ssb/internalManifest'
 
 var beaker = {}
+
 if (window.location.protocol === 'beaker:') {
   var opts = {timeout: false, errors}
   const archivesRPC = rpc.importAPI('archives', archivesManifest, opts)
   const bookmarksRPC = rpc.importAPI('bookmarks', bookmarksManifest, opts)
   const historyRPC = rpc.importAPI('history', historyManifest, opts)
   const profilesRPC = rpc.importAPI('profiles', profilesManifest, opts)
-  const ssbInternalRPC = rpc.importAPI('internal-ssb', ssbInternalManifest, opts)
 
   // beaker.archives
   beaker.archives = new EventTarget()
@@ -73,6 +73,15 @@ if (window.location.protocol === 'beaker:') {
   beaker.profiles.getCurrent = profilesRPC.getCurrent
   beaker.profiles.setCurrent = profilesRPC.setCurrent
   // bindEventStream(profilesRPC.createEventStream(), beaker.profiles) TODO
+
+}
+
+var isAliasAuthorPage = window.location.protocol === 'ssb:'
+  && (!window.location.pathname || window.location.pathname === '/')
+  && window.location.host.split('.').length === 2
+
+if (window.location.protocol === 'beaker:' || isAliasAuthorPage) {
+  const ssbInternalRPC = rpc.importAPI('internal-ssb', ssbInternalManifest, opts)
 
   beaker.ssb = {}
   beaker.ssb.getAbout = ssbInternalRPC.getAbout

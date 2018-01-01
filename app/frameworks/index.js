@@ -8,7 +8,7 @@ import { Writable } from 'stream';
 import rpc from 'pauls-electron-rpc'
 import {getFrameworkPerm} from '../lib/strings'
 import {queryPermission as queryPerm} from '../background-process/ui/permissions'
-import {internalOnly} from '../lib/bg/rpc'
+import {internalOnlyOrAuthorPage} from '../lib/bg/rpc'
 import {getPermission} from '../background-process/web-apis/framework'
 
 function emitterAPIToStream(method) {
@@ -52,7 +52,7 @@ function framework (frameworkName) {
         return acc
       }, {})
 
-      rpc.exportAPI('internal-' + frameworkName, manifest, api, internalOnly)
+      rpc.exportAPI('internal-' + frameworkName, manifest, api, internalOnlyOrAuthorPage)
     },
     exportAPI (manifest, api) {
       // Extend api to support EventEmitters and Listeners
