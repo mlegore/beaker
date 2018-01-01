@@ -112,6 +112,7 @@
     "adm-zip": "^0.4.7",
     "atob": "^2.0.3",
     "base32": "0.0.6",
+    "btoa": "^1.1.2",
     "file-type": "^7.4.0",
     "muxrpc": "^6.4.0",
     "pauls-electron-rpc": "^4.1.0",
