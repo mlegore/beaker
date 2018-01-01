@@ -1,5 +1,7 @@
 import url from 'url'
 import { Readable } from 'stream'
+import btoa from 'btoa'
+import base32 from 'base32'
 import datDns from '../background-process/networks/dat/dns'
 
 // helper to make node-style CBs into promises
@@ -78,6 +80,27 @@ export function toStream (data) {
   readable.push(data)
   readable.push(null)
   return readable
+}
+
+function decodeFeedIdBase32 (feedId, encoding) {
+  return '@' + btoa(base32.decode(feedId)) + '.' + encoding
+}
+
+export function decodeAliasHost (host) {
+  var parts = host.split('.')
+
+  if(parts.length === 2) {
+    return {
+      feedId: decodeFeedIdBase32(parts[0], parts[1])
+    }
+  } else if (parts.length === 3) {
+    return {
+      name: parts[0],
+      feedId: decodeFeedIdBase32(parts[1], parts[2])
+    }
+  }
+
+  throw new Error('Invalid alias url')
 }
 
 // Underscore.js
