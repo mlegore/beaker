@@ -2,12 +2,15 @@
 
 const yo = require('yo-yo')
 const moment = require('moment')
+const base32 = require('base32')
+const encodeAliasUri = require('../../lib/util')
 
 // globals
 // =
 
 // how many px from bottom till more is loaded?
 const BEGIN_LOAD_OFFSET = 500
+window.base32 = base32
 
 // visits, cached in memory
 var aliases = []
@@ -68,11 +71,6 @@ fetch(render)
 
 // rendering
 // =
-
-function getAliasUrl(author, name) {
-  return 'ssb://' + encodeURIComponent(author) + '~' + encodeURIComponent(name)
-}
-
 function getBlobUrl(hash) {
   return 'ssb-blob://' + encodeURIComponent(hash)
 }
@@ -96,7 +94,7 @@ function render () {
   aliases.forEach(author => {
     var aboutAuthor = getAbout(author.author)
     console.log(aboutAuthor)
-    var authorEls = author.aliases.map(alias => yo`<div class="links-list"><a href="${getAliasUrl(author.author, alias.name)}">
+    var authorEls = author.aliases.map(alias => yo`<div class="links-list"><a href="${encodeAliasUri(author.author, alias.name)}">
         <strong>${alias.name}</strong> => ${alias.content.about} (${alias.content.description})
       </a></div>`)
     rowEls.push(yo`<div class="">
