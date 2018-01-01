@@ -31,6 +31,8 @@ function burnthemallMaybeTask () {
     console.log('~~Electron version change detected.~~')
     console.log('We need to rebuild to fit the new version.')
     console.log('###### BURN THEM ALL! ######')
+    console.log(beakerPackageJson.devDependencies.electron)
+    console.log(electronPackageJson.version)
 
     childProcess.spawn('npm', ['run', 'burnthemall'], {
       stdio: 'inherit',
