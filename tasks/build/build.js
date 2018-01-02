@@ -27,12 +27,17 @@ function burnthemallMaybeTask () {
   if (!beakerPackageJson || !electronPackageJson) return
 
   // is the installed version of electron different than the required one?
-  if (beakerPackageJson.devDependencies.electron != electronPackageJson.version) {
+  var beakerElectron = beakerPackageJson.devDependencies.electron
+  var packageElectron = electronPackageJson.version
+  beakerElectron = beakerElectron.startsWith('^') ? beakerElectron.substring(1) : beakerElectron
+  packageElectron = packageElectron.startsWith('^') ? packageElectron.substring(1) : packageElectron
+
+  if (beakerElectron != packageElectron) {
     console.log('~~Electron version change detected.~~')
     console.log('We need to rebuild to fit the new version.')
     console.log('###### BURN THEM ALL! ######')
-    console.log(beakerPackageJson.devDependencies.electron)
-    console.log(electronPackageJson.version)
+    console.log(beakerElectron)
+    console.log(packageElectron)
 
     childProcess.spawn('npm', ['run', 'burnthemall'], {
       stdio: 'inherit',

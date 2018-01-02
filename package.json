@@ -119,7 +119,8 @@
     "pull-concat": "^1.1.1",
     "pull-identify-filetype": "^1.1.0",
     "pull-pause": "0.0.1",
-    "ssb-afterparty": "0.0.1",
+    "ssb-about-resource": "0.0.1",
+    "ssb-afterparty": "0.0.2",
     "ssb-party": "^0.5.1",
     "stream-to-buffer": "^0.1.0",
     "yargs": "^4.2.0"
