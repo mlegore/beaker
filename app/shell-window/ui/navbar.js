@@ -389,7 +389,7 @@ function renderPrettyLocation (value, isHidden, gotInsecureResponse, siteLoadErr
     try {
       var { protocol, host, pathname, search, hash } = new URL(value)
       var hostVersion
-      if (protocol === 'ssb:') {
+      if (protocol === 'ssb-alias:') {
         var {name, feedId} = decodeAliasHost(host)
         host = feedId
         if (host.length > 15) {

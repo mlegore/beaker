@@ -76,7 +76,7 @@ if (window.location.protocol === 'beaker:') {
 
 }
 
-var isAliasAuthorPage = window.location.protocol === 'ssb:'
+var isAliasAuthorPage = window.location.protocol === 'ssb-alias:'
   && (!window.location.pathname || window.location.pathname === '/')
   && window.location.host.split('.').length === 2
 

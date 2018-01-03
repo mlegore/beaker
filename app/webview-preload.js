@@ -29,7 +29,7 @@ if (window.location.protocol === 'beaker:') {
   window.beaker = beaker
 }
 
-if (window.location.protocol === 'ssb:'
+if (window.location.protocol === 'ssb-alias:'
   && (!window.location.pathname || window.location.pathname === '/')
   && window.location.host.split('.').length === 2) {
   window.beaker = { ssb: beaker.ssb }

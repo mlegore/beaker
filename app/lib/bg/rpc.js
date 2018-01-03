@@ -11,7 +11,7 @@ export function internalOnlyOrAuthorPage (event, methodName, args) {
   }
 
   var url = URL.parse(event.sender.getURL())
-  var isAliasAuthorPage = url.protocol === 'ssb:'
+  var isAliasAuthorPage = url.protocol === 'ssb-alias:'
     && (!url.pathname || url.pathname === '/')
     && url.host.split('.').length === 2
 

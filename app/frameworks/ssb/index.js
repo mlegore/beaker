@@ -230,18 +230,7 @@ export default function (framework) {
       if (error) console.error('Failed to register protocol')
     })
 
-    protocol.registerHttpProtocol('ssb', aliasProtocol(sbot), (error) => {
-      if (error) console.error('Failed to register protocol')
-    })
-
-    protocol.registerHttpProtocol('ssb-extra', (request, callback) => {
-      var url = request.url.replace('ssb-extra:', 'ssb:')
-      callback({
-        url: url,
-        method: request.method,
-        uploadData: request.uploadData
-      })
-    }, (error) => {
+    protocol.registerHttpProtocol('ssb-alias', aliasProtocol(sbot), (error) => {
       if (error) console.error('Failed to register protocol')
     })
 

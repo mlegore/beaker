@@ -7,5 +7,5 @@ function encodeFeedIdBase32 (feedId) {
 }
 
 module.exports = function encodeAliasUri(feedId, name) {
-  return 'ssb://' + name + '.' + encodeFeedIdBase32(feedId)
+  return 'ssb-alias://' + name + '.' + encodeFeedIdBase32(feedId)
 }

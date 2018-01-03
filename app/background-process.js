@@ -50,7 +50,7 @@ process.on('unhandledRejection', (reason, p) => {
 })
 
 // configure the protocols
-protocol.registerStandardSchemes(['dat', 'beaker', 'ssb'], { secure: true })
+protocol.registerStandardSchemes(['dat', 'beaker', 'ssb-alias'], { secure: true })
 
 app.on('ready', function () {
   // databases
