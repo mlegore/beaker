@@ -31,6 +31,8 @@ import * as openURL from './background-process/open-url'
 
 import frameworks from './frameworks/index.js'
 
+import ipc from './background-process/ipc'
+
 var argv = require('yargs').argv
 
 // read config from env vars
@@ -45,50 +47,52 @@ if (argv.intercept) {
   process.env.intercept = true
 }
 
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
-})
+ipc(argv.url, function () {
+  process.on('unhandledRejection', (reason, p) => {
+    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+  })
 
-// configure the protocols
-protocol.registerStandardSchemes(['dat', 'beaker', 'ssb-alias'], { secure: true })
+  // configure the protocols
+  protocol.registerStandardSchemes(['dat', 'beaker', 'ssb-alias'], { secure: true })
 
-app.on('ready', function () {
-  // databases
-  archives.setup()
-  settings.setup()
-  sitedata.setup()
-  profileDataDb.setup()
+  app.on('ready', function () {
+    // databases
+    archives.setup()
+    settings.setup()
+    sitedata.setup()
+    profileDataDb.setup()
 
-  // base
-  beakerBrowser.setup()
+    // base
+    beakerBrowser.setup()
 
-  // ui
-  Menu.setApplicationMenu(Menu.buildFromTemplate(buildWindowMenu()))
-  registerContextMenu()
-  windows.setup()
-  downloads.setup()
-  permissions.setup()
-  basicAuth.setup()
+    // ui
+    Menu.setApplicationMenu(Menu.buildFromTemplate(buildWindowMenu()))
+    registerContextMenu()
+    windows.setup()
+    downloads.setup()
+    permissions.setup()
+    basicAuth.setup()
 
-  // protocols
-  beakerProtocol.setup()
-  beakerFaviconProtocol.setup()
-  datProtocol.setup()
+    // protocols
+    beakerProtocol.setup()
+    beakerFaviconProtocol.setup()
+    datProtocol.setup()
 
-  // configure chromium's permissions for the protocols
-  protocol.registerServiceWorkerSchemes(['dat'])
+    // configure chromium's permissions for the protocols
+    protocol.registerServiceWorkerSchemes(['dat'])
 
-  // web APIs
-  webAPIs.setup()
+    // web APIs
+    webAPIs.setup()
 
-  // listen OSX open-url event
-  openURL.setup(),
-  frameworks.setup()
-})
+    // listen OSX open-url event
+    openURL.setup(),
+    frameworks.setup()
+  })
 
-app.on('activate', () => windows.ensureOneWindowExists())
-app.on('open-url', (e, url) => openURL.open(url))
+  app.on('activate', () => windows.ensureOneWindowExists())
+  app.on('open-url', (e, url) => openURL.open(url))
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') { app.quit() }
+  app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') { app.quit() }
+  })
 })

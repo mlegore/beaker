@@ -1,5 +1,7 @@
 // handle OSX open-url event
 import { ipcMain } from 'electron'
+import { URL } from 'url'
+
 var queue = []
 var commandReceiver
 
@@ -12,6 +14,18 @@ export function setup () {
 }
 
 export function open (url) {
+  if (url.startsWith('ssb:')) {
+      var parsed = new URL(url)
+      console.warn(parsed)
+      var link = parsed.searchParams.get('link')
+      
+      if (!link) {
+        return
+      }
+
+      url = 'ssb-blob://' + encodeURIComponent(link)
+  }
+
   if (commandReceiver) {
     commandReceiver.send('command', 'file:new-tab', url)
   } else {
